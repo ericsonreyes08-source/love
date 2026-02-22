@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>For My Love ❤️</title>
+
+<style>
+body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(-45deg, #ff758c, #ff7eb3, #ff9a9e, #fad0c4);
+    background-size: 400% 400%;
+    animation: gradientBG 10s ease infinite;
+    text-align: center;
+}
+
+@keyframes gradientBG {
+    0% {background-position: 0% 50%;}
+    50% {background-position: 100% 50%;}
+    100% {background-position: 0% 50%;}
+}
+
+.container {
+    position: relative;
+    top: 35vh;
+}
+
+h1 {
+    color: white;
+    font-size: 30px;
+    text-shadow: 0 0 15px rgba(255,255,255,0.8);
+}
+
+button {
+    padding: 15px 35px;
+    font-size: 20px;
+    border: none;
+    border-radius: 40px;
+    margin: 20px;
+    cursor: pointer;
+    position: absolute;
+    transition: 0.2s;
+}
+
+#yesBtn {
+    background: #ff4d6d;
+    color: white;
+    left: 25%;
+    box-shadow: 0 0 20px #ff4d6d;
+}
+
+#noBtn {
+    background: #222;
+    color: white;
+    left: 60%;
+}
+
+button:hover {
+    transform: scale(1.1);
+}
+
+/* Floating hearts */
+.heart {
+    position: absolute;
+    bottom: -50px;
+    font-size: 24px;
+    animation: floatUp 6s linear infinite;
+}
+
+@keyframes floatUp {
+    0% { transform: translateY(0); opacity: 1; }
+    100% { transform: translateY(-110vh); opacity: 0; }
+}
+</style>
+</head>
+
+<body>
+
+<!-- 🎵 Background Music -->
+<audio id="bgMusic" autoplay loop>
+    <source src="once-in-a-lifetime.mp3" type="audio/mpeg">
+</audio>
+
+<div class="container">
+    <h1 id="question"></h1>
+    <button id="yesBtn">YES 💖</button>
+    <button id="noBtn">NO 😢</button>
+</div>
+
+<script>
+
+// Name set to Love ❤️
+const herName = "Love";
+
+document.getElementById("question").innerHTML = 
+    `Can we be together again, ${herName}? 💕`;
+
+const noBtn = document.getElementById("noBtn");
+const yesBtn = document.getElementById("yesBtn");
+
+// Make NO button run away
+function moveButton() {
+    const maxX = window.innerWidth - noBtn.offsetWidth;
+    const maxY = window.innerHeight - noBtn.offsetHeight;
+
+    const randomX = Math.random() * maxX;
+    const randomY = Math.random() * maxY;
+
+    noBtn.style.left = randomX + "px";
+    noBtn.style.top = randomY + "px";
+}
+
+noBtn.addEventListener("touchstart", function(e) {
+    e.preventDefault();
+    moveButton();
+});
+
+noBtn.addEventListener("mouseover", moveButton);
+
+// YES button action
+yesBtn.addEventListener("click", function() {
+    document.body.innerHTML = `
+        <div style="display:flex;justify-content:center;align-items:center;height:100vh;text-align:center;background:linear-gradient(to right,#ff4d6d,#ff758c);color:white;font-family:Arial;">
+            <div>
+                <h1 style="font-size:40px;">Thank you 💖</h1>
+                <p style="font-size:24px;">
+                    I love you, ${herName}. <br>
+                    I know you love me too ❤️
+                </p>
+            </div>
+        </div>
+    `;
+});
+
+// Floating Hearts
+function createHeart() {
+    const heart = document.createElement("div");
+    heart.classList.add("heart");
+    heart.innerHTML = "💖";
+    heart.style.left = Math.random() * 100 + "vw";
+    heart.style.fontSize = (Math.random() * 20 + 20) + "px";
+    heart.style.animationDuration = (Math.random() * 3 + 3) + "s";
+    document.body.appendChild(heart);
+
+    setTimeout(() => {
+        heart.remove();
+    }, 6000);
+}
+
+setInterval(createHeart, 300);
+
+</script>
+
+</body>
+</html>
