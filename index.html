@@ -18,7 +18,7 @@ button {
   margin:20px; cursor:pointer; position:absolute; transition:0.2s; user-select:none;
 }
 #yesBtn {background:#ff4d6d; color:white; left:25%; width:120px; height:50px; box-shadow:0 0 20px #ff4d6d;}
-.noBtn {background:#222; color:white; width:120px; height:50px;}
+.noBtn {background:#222; color:white; left:60%; top:50px; width:120px; height:50px;}
 .heart {position:absolute; bottom:-50px; font-size:24px; animation:floatUp 6s linear infinite;}
 @keyframes floatUp {0%{transform:translateY(0);opacity:1}100%{transform:translateY(-110vh);opacity:0}}
 .firework {position:absolute; font-size:30px; animation:explode 1s ease-out forwards;}
@@ -102,33 +102,35 @@ yesBtn.addEventListener("click",()=>{
   launchFireworks();
 });
 
-// NO button behavior with cloning and messages
-function handleNo(noBtn){
+// NO button behavior
+function moveNo(noBtn){
   noClickCount++;
-  
-  // Move randomly
   const padding = 20;
   const maxX = window.innerWidth - noBtn.offsetWidth - padding;
   const maxY = window.innerHeight - noBtn.offsetHeight - padding;
   const x = Math.random()*maxX;
   const y = Math.random()*maxY;
-  noBtn.style.transform = `translate(${x}px, ${y}px) scale(${Math.max(0.8,1 - noClickCount*0.05)})`;
-  
-  // Clone funny NO buttons every click
+  noBtn.style.left = x + "px";
+  noBtn.style.top = y + "px";
+  noBtn.style.transform = `scale(${Math.max(0.8,1 - noClickCount*0.05)})`;
+
+  // Add clone after small delay to avoid touchscreen glitches
   if(noClickCount <=3){
-    const clone = noBtn.cloneNode(true);
-    clone.innerText = noClickCount===1 ? "Are you sure? 😳" : noClickCount===2 ? "Really?? 😭" : "Think again 😏";
-    clone.style.transform = `translate(${Math.random()*maxX}px, ${Math.random()*maxY}px) scale(0.9)`;
-    container.appendChild(clone);
-    clone.addEventListener("mouseenter",()=>handleNo(clone));
-    clone.addEventListener("touchstart", e=>{e.preventDefault(); handleNo(clone);});
+    setTimeout(()=>{
+      const clone = noBtn.cloneNode(true);
+      clone.innerText = noClickCount===1 ? "Are you sure? 😳" : noClickCount===2 ? "Really?? 😭" : "Think again 😏";
+      clone.style.left = Math.random()*maxX + "px";
+      clone.style.top = Math.random()*maxY + "px";
+      container.appendChild(clone);
+      clone.addEventListener("mouseenter",()=>moveNo(clone));
+      clone.addEventListener("touchstart",e=>{e.preventDefault(); moveNo(clone);});
+    },50);
   }
 }
 
-// Initial NO button events
 const initialNo = document.querySelector(".noBtn");
-initialNo.addEventListener("mouseenter",()=>handleNo(initialNo));
-initialNo.addEventListener("touchstart", e=>{e.preventDefault(); handleNo(initialNo);});
+initialNo.addEventListener("mouseenter",()=>moveNo(initialNo));
+initialNo.addEventListener("touchstart", e=>{e.preventDefault(); moveNo(initialNo);});
 </script>
 
 </body>
