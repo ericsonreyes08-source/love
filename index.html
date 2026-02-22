@@ -5,118 +5,130 @@
 <title>For My Love ❤️</title>
 <style>
 body {
-    margin: 0; padding: 0; overflow: hidden; font-family: Arial, sans-serif;
-    background: linear-gradient(-45deg, #ff758c, #ff7eb3, #ff9a9e, #fad0c4);
-    background-size: 400% 400%;
-    animation: gradientBG 10s ease infinite; text-align: center;
+  margin: 0; padding: 0; font-family: Arial; overflow: hidden;
+  background: linear-gradient(-45deg, #ff758c,#ff7eb3,#ff9a9e,#fad0c4);
+  background-size:400% 400%; animation: gradientBG 10s ease infinite; text-align:center;
 }
-@keyframes gradientBG {0% {background-position:0% 50%;}50% {background-position:100% 50%;}100% {background-position:0% 50%;}}
-.container { position: relative; top: 35vh; }
-h1 { color:white; font-size:28px; text-shadow:0 0 15px rgba(255,255,255,0.8); }
-button { padding:15px 35px; font-size:20px; border:none; border-radius:40px; margin:20px; cursor:pointer; position:absolute; transition:0.2s;}
-#yesBtn { background:#ff4d6d; color:white; left:25%; box-shadow:0 0 20px #ff4d6d;}
-#noBtn { background:#222; color:white; left:60%;}
-.heart { position:absolute; bottom:-50px; font-size:24px; animation:floatUp 6s linear infinite;}
-@keyframes floatUp {0% {transform:translateY(0); opacity:1;} 100% {transform:translateY(-110vh); opacity:0;}}
-.firework { position:absolute; font-size:30px; animation:explode 1s ease-out forwards;}
-@keyframes explode {0% {transform:scale(0.5); opacity:1;} 100% {transform:scale(2); opacity:0;}}
+@keyframes gradientBG {0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+.container {position: relative; top: 35vh;}
+h1 {color:white; font-size:28px; text-shadow:0 0 15px rgba(255,255,255,0.8);}
+button {padding:15px 35px; font-size:20px; border:none; border-radius:40px; margin:20px; cursor:pointer; position:absolute; transition:0.2s;}
+#yesBtn {background:#ff4d6d; color:white; left:25%; width:120px; height:50px;}
+#noBtn {background:#222; color:white; left:60%; width:120px; height:50px;}
+.heart {position:absolute; bottom:-50px; font-size:24px; animation:floatUp 6s linear infinite;}
+@keyframes floatUp {0%{transform:translateY(0); opacity:1;}100%{transform:translateY(-110vh); opacity:0;}}
+.firework {position:absolute; font-size:30px; animation:explode 1s ease-out forwards;}
+@keyframes explode {0%{transform:scale(0.5);opacity:1}100%{transform:scale(2);opacity:0;}}
+#startOverlay {
+  position: fixed; top:0; left:0; width:100%; height:100%; background:black;
+  color:white; display:flex; justify-content:center; align-items:center; font-size:24px; z-index:999;
+  flex-direction:column;
+}
 </style>
 </head>
 <body>
 
+<div id="startOverlay">
+  <div>Click or Tap to Start 💖</div>
+</div>
+
 <audio id="bgMusic" loop>
-    <source src="once-in-a-lifetime.mp3" type="audio/mpeg">
+  <source src="once-in-a-lifetime.mp3" type="audio/mpeg">
 </audio>
 
 <div class="container">
-    <h1 id="question"></h1>
-    <button id="yesBtn">YES 💖</button>
-    <button id="noBtn">NO 😢</button>
+  <h1 id="question"></h1>
+  <button id="yesBtn">YES 💖</button>
+  <button id="noBtn">NO 😢</button>
 </div>
 
 <script>
-const herName = "Love";
-document.getElementById("question").innerHTML = `Can we be together again, ${herName}? 💕`;
+const herName="Love";
+document.getElementById("question").innerHTML=`Can we be together again, ${herName}? 💕`;
 
-const yesBtn = document.getElementById("yesBtn");
-const noBtn = document.getElementById("noBtn");
-let noClickCount = 0;
-const minScale = 0.7; // don’t shrink below this
-let audioPlayed = false;
-const bgMusic = document.getElementById("bgMusic");
-
-// Play music after first user interaction
-function playAudioOnce() {
-    if (!audioPlayed) { bgMusic.play().catch(()=>{}); audioPlayed = true; }
-}
-document.addEventListener('click', playAudioOnce, { once: true });
-document.addEventListener('touchstart', playAudioOnce, { once: true });
-
-// Move NO button safely
-function moveNoButton() {
-    const padding = 20;
-    const maxX = window.innerWidth - noBtn.offsetWidth - padding;
-    const maxY = window.innerHeight - noBtn.offsetHeight - padding;
-    const randomX = Math.random() * maxX;
-    const randomY = Math.random() * maxY;
-    noBtn.style.left = randomX + "px";
-    noBtn.style.top = randomY + "px";
-}
-
-// Handle NO button interaction
-function handleNoClick() {
-    noClickCount++;
-    moveNoButton();
-    if (navigator.vibrate) navigator.vibrate(100);
-    const scale = Math.max(minScale, 1 - noClickCount*0.05);
-    noBtn.style.transform = `scale(${scale})`;
-    if(noClickCount ===1) noBtn.innerText="Are you sure? 😳";
-    else if(noClickCount===2) noBtn.innerText="Really sure?? 😭";
-    else if(noClickCount>=3) noBtn.innerText="Think again 😏";
-}
-
-// NO button events
-noBtn.addEventListener("mouseenter", handleNoClick);
-noBtn.addEventListener("touchstart", function(e){ e.preventDefault(); handleNoClick(); });
-
-// YES button
-yesBtn.addEventListener("click", function(){
-    document.body.innerHTML = `<div style="display:flex;justify-content:center;align-items:center;height:100vh;text-align:center;background:black;color:white;flex-direction:column;">
-        <h1 style="font-size:45px;color:#ff4d6d;">YESSSS 💖</h1>
-        <p style="font-size:26px;">
-        Thank you, ${herName}. <br>
-        I love you lovelove. <br>
-        I know you love me too ❤️
-        </p>
-    </div>`;
-    launchFireworks();
-});
+const yesBtn=document.getElementById("yesBtn");
+const noBtn=document.getElementById("noBtn");
+let noClickCount=0;
+const minScale=0.8;
+const bgMusic=document.getElementById("bgMusic");
 
 // Floating hearts
-function createHeart() {
-    const heart = document.createElement("div");
-    heart.classList.add("heart");
-    heart.innerHTML="💖";
-    heart.style.left=Math.random()*100+"vw";
-    heart.style.fontSize=(Math.random()*20+20)+"px";
-    heart.style.animationDuration=(Math.random()*3+3)+"s";
-    document.body.appendChild(heart);
-    setTimeout(()=>heart.remove(),6000);
+function createHeart(){
+  const heart=document.createElement("div");
+  heart.classList.add("heart");
+  heart.innerHTML="💖";
+  heart.style.left=Math.random()*100+"vw";
+  heart.style.fontSize=(Math.random()*20+20)+"px";
+  heart.style.animationDuration=(Math.random()*3+3)+"s";
+  document.body.appendChild(heart);
+  setTimeout(()=>heart.remove(),6000);
 }
 setInterval(createHeart,300);
 
+// Move NO button safely
+function moveNoButton(){
+  const padding=20;
+  const maxX=window.innerWidth-noBtn.offsetWidth-padding;
+  const maxY=window.innerHeight-noBtn.offsetHeight-padding;
+  const randomX=Math.random()*maxX;
+  const randomY=Math.random()*maxY;
+  noBtn.style.left=randomX+"px";
+  noBtn.style.top=randomY+"px";
+}
+
+// Handle NO button
+function handleNoClick(){
+  noClickCount++;
+  moveNoButton();
+  if(navigator.vibrate) navigator.vibrate(100);
+  const scale=Math.max(minScale,1-noClickCount*0.05);
+  noBtn.style.transform=`scale(${scale})`;
+  if(noClickCount===1) noBtn.innerText="Are you sure? 😳";
+  else if(noClickCount===2) noBtn.innerText="Really sure?? 😭";
+  else if(noClickCount>=3) noBtn.innerText="Think again 😏";
+}
+
+// NO events
+noBtn.addEventListener("mouseenter",handleNoClick);
+noBtn.addEventListener("touchstart",e=>{e.preventDefault(); handleNoClick();});
+
+// YES button
+yesBtn.addEventListener("click",()=>{
+  document.body.innerHTML=`<div style="display:flex;justify-content:center;align-items:center;height:100vh;text-align:center;background:black;color:white;flex-direction:column;">
+    <h1 style="font-size:45px;color:#ff4d6d;">YESSSS 💖</h1>
+    <p style="font-size:26px;">
+    Thank you, ${herName}. <br>
+    I love you lovelove. <br>
+    I know you love me too ❤️
+    </p>
+  </div>`;
+  launchFireworks();
+});
+
 // Fireworks
 function launchFireworks(){
-    for(let i=0;i<30;i++){
-        const fw=document.createElement("div");
-        fw.classList.add("firework");
-        fw.innerHTML="🎆";
-        fw.style.left=Math.random()*100+"vw";
-        fw.style.top=Math.random()*100+"vh";
-        document.body.appendChild(fw);
-        setTimeout(()=>fw.remove(),1000);
-    }
+  for(let i=0;i<30;i++){
+    const fw=document.createElement("div");
+    fw.classList.add("firework");
+    fw.innerHTML="🎆";
+    fw.style.left=Math.random()*100+"vw";
+    fw.style.top=Math.random()*100+"vh";
+    document.body.appendChild(fw);
+    setTimeout(()=>fw.remove(),1000);
+  }
 }
+
+// Overlay to start audio
+const startOverlay=document.getElementById("startOverlay");
+startOverlay.addEventListener("click",()=>{
+  bgMusic.play().catch(()=>{});
+  startOverlay.style.display="none";
+});
+startOverlay.addEventListener("touchstart",()=>{
+  bgMusic.play().catch(()=>{});
+  startOverlay.style.display="none";
+});
 </script>
+
 </body>
 </html>
