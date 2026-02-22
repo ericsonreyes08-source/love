@@ -9,7 +9,7 @@ body {
     margin: 0;
     padding: 0;
     overflow: hidden;
-    font-family: 'Arial', sans-serif;
+    font-family: Arial, sans-serif;
     background: linear-gradient(-45deg, #ff758c, #ff7eb3, #ff9a9e, #fad0c4);
     background-size: 400% 400%;
     animation: gradientBG 10s ease infinite;
@@ -29,7 +29,7 @@ body {
 
 h1 {
     color: white;
-    font-size: 30px;
+    font-size: 28px;
     text-shadow: 0 0 15px rgba(255,255,255,0.8);
 }
 
@@ -51,17 +51,12 @@ button {
     box-shadow: 0 0 20px #ff4d6d;
 }
 
-#noBtn {
+.noBtn {
     background: #222;
     color: white;
     left: 60%;
 }
 
-button:hover {
-    transform: scale(1.1);
-}
-
-/* Floating hearts */
 .heart {
     position: absolute;
     bottom: -50px;
@@ -73,68 +68,98 @@ button:hover {
     0% { transform: translateY(0); opacity: 1; }
     100% { transform: translateY(-110vh); opacity: 0; }
 }
+
+.firework {
+    position: absolute;
+    font-size: 30px;
+    animation: explode 1s ease-out forwards;
+}
+
+@keyframes explode {
+    0% {transform: scale(0.5); opacity: 1;}
+    100% {transform: scale(2); opacity: 0;}
+}
 </style>
 </head>
 
 <body>
 
-<!-- 🎵 Background Music -->
-<audio id="bgMusic" autoplay loop>
+<audio autoplay loop>
     <source src="once-in-a-lifetime.mp3" type="audio/mpeg">
 </audio>
 
 <div class="container">
     <h1 id="question"></h1>
     <button id="yesBtn">YES 💖</button>
-    <button id="noBtn">NO 😢</button>
+    <button class="noBtn" id="noBtn">NO 😢</button>
 </div>
 
 <script>
 
-// Name set to Love ❤️
 const herName = "Love";
+document.getElementById("question").innerHTML =
+`Can we be together again, ${herName}? 💕`;
 
-document.getElementById("question").innerHTML = 
-    `Can we be together again, ${herName}? 💕`;
-
-const noBtn = document.getElementById("noBtn");
 const yesBtn = document.getElementById("yesBtn");
+let noBtn = document.getElementById("noBtn");
 
-// Make NO button run away
-function moveButton() {
-    const maxX = window.innerWidth - noBtn.offsetWidth;
-    const maxY = window.innerHeight - noBtn.offsetHeight;
+let noClickCount = 0;
+
+function moveButton(button) {
+    const padding = 20;
+    const maxX = window.innerWidth - button.offsetWidth - padding;
+    const maxY = window.innerHeight - button.offsetHeight - padding;
 
     const randomX = Math.random() * maxX;
     const randomY = Math.random() * maxY;
 
-    noBtn.style.left = randomX + "px";
-    noBtn.style.top = randomY + "px";
+    button.style.left = randomX + "px";
+    button.style.top = randomY + "px";
 }
 
-noBtn.addEventListener("touchstart", function(e) {
+function makeNoFunny(button) {
+    noClickCount++;
+
+    if (navigator.vibrate) navigator.vibrate(100);
+
+    moveButton(button);
+
+    button.style.transform = `scale(${1 - noClickCount * 0.1})`;
+
+    if (noClickCount === 1) button.innerText = "Are you sure? 😳";
+    if (noClickCount === 2) button.innerText = "Really sure?? 😭";
+    if (noClickCount === 3) button.innerText = "Think again 😏";
+
+    if (noClickCount >= 3) {
+        const clone = button.cloneNode(true);
+        clone.classList.add("noBtn");
+        clone.onclick = () => makeNoFunny(clone);
+        document.body.appendChild(clone);
+        moveButton(clone);
+    }
+}
+
+noBtn.addEventListener("mouseenter", () => makeNoFunny(noBtn));
+noBtn.addEventListener("touchstart", (e) => {
     e.preventDefault();
-    moveButton();
+    makeNoFunny(noBtn);
 });
 
-noBtn.addEventListener("mouseover", moveButton);
-
-// YES button action
 yesBtn.addEventListener("click", function() {
     document.body.innerHTML = `
-        <div style="display:flex;justify-content:center;align-items:center;height:100vh;text-align:center;background:linear-gradient(to right,#ff4d6d,#ff758c);color:white;font-family:Arial;">
-            <div>
-                <h1 style="font-size:40px;">Thank you 💖</h1>
-                <p style="font-size:24px;">
-                    I love you, ${herName}. <br>
-                    I know you love me too ❤️
-                </p>
-            </div>
-        </div>
+    <div style="display:flex;justify-content:center;align-items:center;height:100vh;text-align:center;background:black;color:white;flex-direction:column;">
+        <h1 style="font-size:45px;color:#ff4d6d;">YESSSS 💖</h1>
+        <p style="font-size:26px;">
+        Thank you, ${herName}. <br>
+        I love you lovelove. <br>
+        I know you love me too ❤️
+        </p>
+    </div>
     `;
+    launchFireworks();
 });
 
-// Floating Hearts
+// Floating hearts
 function createHeart() {
     const heart = document.createElement("div");
     heart.classList.add("heart");
@@ -143,13 +168,22 @@ function createHeart() {
     heart.style.fontSize = (Math.random() * 20 + 20) + "px";
     heart.style.animationDuration = (Math.random() * 3 + 3) + "s";
     document.body.appendChild(heart);
-
-    setTimeout(() => {
-        heart.remove();
-    }, 6000);
+    setTimeout(() => heart.remove(), 6000);
 }
-
 setInterval(createHeart, 300);
+
+// Fireworks
+function launchFireworks() {
+    for (let i = 0; i < 30; i++) {
+        const fw = document.createElement("div");
+        fw.classList.add("firework");
+        fw.innerHTML = "🎆";
+        fw.style.left = Math.random() * 100 + "vw";
+        fw.style.top = Math.random() * 100 + "vh";
+        document.body.appendChild(fw);
+        setTimeout(() => fw.remove(), 1000);
+    }
+}
 
 </script>
 
