@@ -3,7 +3,6 @@
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>For My Love ❤️</title>
-
 <style>
 body {
     margin: 0;
@@ -15,24 +14,13 @@ body {
     animation: gradientBG 10s ease infinite;
     text-align: center;
 }
-
 @keyframes gradientBG {
     0% {background-position: 0% 50%;}
     50% {background-position: 100% 50%;}
     100% {background-position: 0% 50%;}
 }
-
-.container {
-    position: relative;
-    top: 35vh;
-}
-
-h1 {
-    color: white;
-    font-size: 28px;
-    text-shadow: 0 0 15px rgba(255,255,255,0.8);
-}
-
+.container { position: relative; top: 35vh; }
+h1 { color: white; font-size: 28px; text-shadow: 0 0 15px rgba(255,255,255,0.8); }
 button {
     padding: 15px 35px;
     font-size: 20px;
@@ -43,47 +31,32 @@ button {
     position: absolute;
     transition: 0.2s;
 }
-
-#yesBtn {
-    background: #ff4d6d;
-    color: white;
-    left: 25%;
-    box-shadow: 0 0 20px #ff4d6d;
-}
-
-.noBtn {
-    background: #222;
-    color: white;
-    left: 60%;
-}
-
+#yesBtn { background: #ff4d6d; color: white; left: 25%; box-shadow: 0 0 20px #ff4d6d; }
+#noBtn { background: #222; color: white; left: 60%; }
 .heart {
     position: absolute;
     bottom: -50px;
     font-size: 24px;
     animation: floatUp 6s linear infinite;
 }
-
 @keyframes floatUp {
     0% { transform: translateY(0); opacity: 1; }
     100% { transform: translateY(-110vh); opacity: 0; }
 }
-
 .firework {
     position: absolute;
     font-size: 30px;
     animation: explode 1s ease-out forwards;
 }
-
 @keyframes explode {
     0% {transform: scale(0.5); opacity: 1;}
     100% {transform: scale(2); opacity: 0;}
 }
 </style>
 </head>
-
 <body>
 
+<!-- Background Music -->
 <audio autoplay loop>
     <source src="once-in-a-lifetime.mp3" type="audio/mpeg">
 </audio>
@@ -91,60 +64,50 @@ button {
 <div class="container">
     <h1 id="question"></h1>
     <button id="yesBtn">YES 💖</button>
-    <button class="noBtn" id="noBtn">NO 😢</button>
+    <button id="noBtn">NO 😢</button>
 </div>
 
 <script>
-
 const herName = "Love";
 document.getElementById("question").innerHTML =
 `Can we be together again, ${herName}? 💕`;
 
 const yesBtn = document.getElementById("yesBtn");
-let noBtn = document.getElementById("noBtn");
+const noBtn = document.getElementById("noBtn");
 
 let noClickCount = 0;
 
-function moveButton(button) {
+// Function to move NO button safely inside screen
+function moveNoButton() {
     const padding = 20;
-    const maxX = window.innerWidth - button.offsetWidth - padding;
-    const maxY = window.innerHeight - button.offsetHeight - padding;
-
+    const maxX = window.innerWidth - noBtn.offsetWidth - padding;
+    const maxY = window.innerHeight - noBtn.offsetHeight - padding;
     const randomX = Math.random() * maxX;
     const randomY = Math.random() * maxY;
-
-    button.style.left = randomX + "px";
-    button.style.top = randomY + "px";
+    noBtn.style.left = randomX + "px";
+    noBtn.style.top = randomY + "px";
 }
 
-function makeNoFunny(button) {
+// Function to handle NO click / hover
+function handleNoClick() {
     noClickCount++;
-
-    if (navigator.vibrate) navigator.vibrate(100);
-
-    moveButton(button);
-
-    button.style.transform = `scale(${1 - noClickCount * 0.1})`;
-
-    if (noClickCount === 1) button.innerText = "Are you sure? 😳";
-    if (noClickCount === 2) button.innerText = "Really sure?? 😭";
-    if (noClickCount === 3) button.innerText = "Think again 😏";
-
-    if (noClickCount >= 3) {
-        const clone = button.cloneNode(true);
-        clone.classList.add("noBtn");
-        clone.onclick = () => makeNoFunny(clone);
-        document.body.appendChild(clone);
-        moveButton(clone);
-    }
+    moveNoButton();
+    if (navigator.vibrate) navigator.vibrate(100); // vibrate on phone
+    const scale = Math.max(0.5, 1 - noClickCount * 0.1);
+    noBtn.style.transform = `scale(${scale})`;
+    if (noClickCount === 1) noBtn.innerText = "Are you sure? 😳";
+    if (noClickCount === 2) noBtn.innerText = "Really sure?? 😭";
+    if (noClickCount >= 3) noBtn.innerText = "Think again 😏";
 }
 
-noBtn.addEventListener("mouseenter", () => makeNoFunny(noBtn));
-noBtn.addEventListener("touchstart", (e) => {
+// Events for NO button
+noBtn.addEventListener("mouseover", handleNoClick);
+noBtn.addEventListener("touchstart", function(e){
     e.preventDefault();
-    makeNoFunny(noBtn);
+    handleNoClick();
 });
 
+// YES button click
 yesBtn.addEventListener("click", function() {
     document.body.innerHTML = `
     <div style="display:flex;justify-content:center;align-items:center;height:100vh;text-align:center;background:black;color:white;flex-direction:column;">
@@ -172,7 +135,7 @@ function createHeart() {
 }
 setInterval(createHeart, 300);
 
-// Fireworks
+// Fireworks on YES
 function launchFireworks() {
     for (let i = 0; i < 30; i++) {
         const fw = document.createElement("div");
@@ -184,7 +147,6 @@ function launchFireworks() {
         setTimeout(() => fw.remove(), 1000);
     }
 }
-
 </script>
 
 </body>
