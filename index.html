@@ -5,59 +5,26 @@
 <title>For My Love ❤️</title>
 <style>
 body {
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-    font-family: Arial, sans-serif;
+    margin: 0; padding: 0; overflow: hidden; font-family: Arial, sans-serif;
     background: linear-gradient(-45deg, #ff758c, #ff7eb3, #ff9a9e, #fad0c4);
     background-size: 400% 400%;
-    animation: gradientBG 10s ease infinite;
-    text-align: center;
+    animation: gradientBG 10s ease infinite; text-align: center;
 }
-@keyframes gradientBG {
-    0% {background-position: 0% 50%;}
-    50% {background-position: 100% 50%;}
-    100% {background-position: 0% 50%;}
-}
+@keyframes gradientBG {0% {background-position:0% 50%;}50% {background-position:100% 50%;}100% {background-position:0% 50%;}}
 .container { position: relative; top: 35vh; }
-h1 { color: white; font-size: 28px; text-shadow: 0 0 15px rgba(255,255,255,0.8); }
-button {
-    padding: 15px 35px;
-    font-size: 20px;
-    border: none;
-    border-radius: 40px;
-    margin: 20px;
-    cursor: pointer;
-    position: absolute;
-    transition: 0.2s;
-}
-#yesBtn { background: #ff4d6d; color: white; left: 25%; box-shadow: 0 0 20px #ff4d6d; }
-#noBtn { background: #222; color: white; left: 60%; }
-.heart {
-    position: absolute;
-    bottom: -50px;
-    font-size: 24px;
-    animation: floatUp 6s linear infinite;
-}
-@keyframes floatUp {
-    0% { transform: translateY(0); opacity: 1; }
-    100% { transform: translateY(-110vh); opacity: 0; }
-}
-.firework {
-    position: absolute;
-    font-size: 30px;
-    animation: explode 1s ease-out forwards;
-}
-@keyframes explode {
-    0% {transform: scale(0.5); opacity: 1;}
-    100% {transform: scale(2); opacity: 0;}
-}
+h1 { color:white; font-size:28px; text-shadow:0 0 15px rgba(255,255,255,0.8); }
+button { padding:15px 35px; font-size:20px; border:none; border-radius:40px; margin:20px; cursor:pointer; position:absolute; transition:0.2s;}
+#yesBtn { background:#ff4d6d; color:white; left:25%; box-shadow:0 0 20px #ff4d6d;}
+#noBtn { background:#222; color:white; left:60%;}
+.heart { position:absolute; bottom:-50px; font-size:24px; animation:floatUp 6s linear infinite;}
+@keyframes floatUp {0% {transform:translateY(0); opacity:1;} 100% {transform:translateY(-110vh); opacity:0;}}
+.firework { position:absolute; font-size:30px; animation:explode 1s ease-out forwards;}
+@keyframes explode {0% {transform:scale(0.5); opacity:1;} 100% {transform:scale(2); opacity:0;}}
 </style>
 </head>
 <body>
 
-<!-- Background Music -->
-<audio autoplay loop>
+<audio id="bgMusic" loop>
     <source src="once-in-a-lifetime.mp3" type="audio/mpeg">
 </audio>
 
@@ -69,15 +36,23 @@ button {
 
 <script>
 const herName = "Love";
-document.getElementById("question").innerHTML =
-`Can we be together again, ${herName}? 💕`;
+document.getElementById("question").innerHTML = `Can we be together again, ${herName}? 💕`;
 
 const yesBtn = document.getElementById("yesBtn");
 const noBtn = document.getElementById("noBtn");
-
 let noClickCount = 0;
+const minScale = 0.7; // don’t shrink below this
+let audioPlayed = false;
+const bgMusic = document.getElementById("bgMusic");
 
-// Function to move NO button safely inside screen
+// Play music after first user interaction
+function playAudioOnce() {
+    if (!audioPlayed) { bgMusic.play().catch(()=>{}); audioPlayed = true; }
+}
+document.addEventListener('click', playAudioOnce, { once: true });
+document.addEventListener('touchstart', playAudioOnce, { once: true });
+
+// Move NO button safely
 function moveNoButton() {
     const padding = 20;
     const maxX = window.innerWidth - noBtn.offsetWidth - padding;
@@ -88,37 +63,32 @@ function moveNoButton() {
     noBtn.style.top = randomY + "px";
 }
 
-// Function to handle NO click / hover
+// Handle NO button interaction
 function handleNoClick() {
     noClickCount++;
     moveNoButton();
-    if (navigator.vibrate) navigator.vibrate(100); // vibrate on phone
-    const scale = Math.max(0.5, 1 - noClickCount * 0.1);
+    if (navigator.vibrate) navigator.vibrate(100);
+    const scale = Math.max(minScale, 1 - noClickCount*0.05);
     noBtn.style.transform = `scale(${scale})`;
-    if (noClickCount === 1) noBtn.innerText = "Are you sure? 😳";
-    if (noClickCount === 2) noBtn.innerText = "Really sure?? 😭";
-    if (noClickCount >= 3) noBtn.innerText = "Think again 😏";
+    if(noClickCount ===1) noBtn.innerText="Are you sure? 😳";
+    else if(noClickCount===2) noBtn.innerText="Really sure?? 😭";
+    else if(noClickCount>=3) noBtn.innerText="Think again 😏";
 }
 
-// Events for NO button
-noBtn.addEventListener("mouseover", handleNoClick);
-noBtn.addEventListener("touchstart", function(e){
-    e.preventDefault();
-    handleNoClick();
-});
+// NO button events
+noBtn.addEventListener("mouseenter", handleNoClick);
+noBtn.addEventListener("touchstart", function(e){ e.preventDefault(); handleNoClick(); });
 
-// YES button click
-yesBtn.addEventListener("click", function() {
-    document.body.innerHTML = `
-    <div style="display:flex;justify-content:center;align-items:center;height:100vh;text-align:center;background:black;color:white;flex-direction:column;">
+// YES button
+yesBtn.addEventListener("click", function(){
+    document.body.innerHTML = `<div style="display:flex;justify-content:center;align-items:center;height:100vh;text-align:center;background:black;color:white;flex-direction:column;">
         <h1 style="font-size:45px;color:#ff4d6d;">YESSSS 💖</h1>
         <p style="font-size:26px;">
         Thank you, ${herName}. <br>
         I love you lovelove. <br>
         I know you love me too ❤️
         </p>
-    </div>
-    `;
+    </div>`;
     launchFireworks();
 });
 
@@ -126,28 +96,27 @@ yesBtn.addEventListener("click", function() {
 function createHeart() {
     const heart = document.createElement("div");
     heart.classList.add("heart");
-    heart.innerHTML = "💖";
-    heart.style.left = Math.random() * 100 + "vw";
-    heart.style.fontSize = (Math.random() * 20 + 20) + "px";
-    heart.style.animationDuration = (Math.random() * 3 + 3) + "s";
+    heart.innerHTML="💖";
+    heart.style.left=Math.random()*100+"vw";
+    heart.style.fontSize=(Math.random()*20+20)+"px";
+    heart.style.animationDuration=(Math.random()*3+3)+"s";
     document.body.appendChild(heart);
-    setTimeout(() => heart.remove(), 6000);
+    setTimeout(()=>heart.remove(),6000);
 }
-setInterval(createHeart, 300);
+setInterval(createHeart,300);
 
-// Fireworks on YES
-function launchFireworks() {
-    for (let i = 0; i < 30; i++) {
-        const fw = document.createElement("div");
+// Fireworks
+function launchFireworks(){
+    for(let i=0;i<30;i++){
+        const fw=document.createElement("div");
         fw.classList.add("firework");
-        fw.innerHTML = "🎆";
-        fw.style.left = Math.random() * 100 + "vw";
-        fw.style.top = Math.random() * 100 + "vh";
+        fw.innerHTML="🎆";
+        fw.style.left=Math.random()*100+"vw";
+        fw.style.top=Math.random()*100+"vh";
         document.body.appendChild(fw);
-        setTimeout(() => fw.remove(), 1000);
+        setTimeout(()=>fw.remove(),1000);
     }
 }
 </script>
-
 </body>
 </html>
